@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Informações do País</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #a7a7a7;
+      }
+      #barra {
+      height: 20px;
+      background-color: red;
+    }
+      
+      h1 {
+        font-size: 32px;
+        text-align: center;
+        margin-top: 40px;
+      }
+      
+      label {
+        font-weight: bold;
+      }
+      
+      input[type="text"] {
+        padding: 8px;
+        border-radius: 4px;
+        border: none;
+        margin-right: 10px;
+        width: 190px;
+        transform: translate(525px, 0px);
+      }
+      
+      button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transform: translate(525px, 0px);
+      }
+      
+      button:hover {
+        background-color: #3e8e41;
+      }
+      
+      div {
+        margin-top: 16px;
+      }
+      
+      span {
+        margin-left: 8px;
+      }
+      #bandeira {
+        width: 280px;
+        height: 140px;
+        border: 2px black solid;
+        margin-left: 20px;
+        margin-top: 18px;
+      }
+.label {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.info {
+  margin-bottom: 8px;
+}
+    #graf {
+        border: 2px black solid;
+        width: 300px;
+        height: 250px;
+        transform: translate(450px, -350px);
+    }
+
+
+    </style>
+  </head>
+  <body>
+    <h1>Informações do País (inglês)</h1>
+    <div>
+      <input type="text" id="pais" placeholder="Digite o nome do país em inglês">
+      <button onclick="buscar()">Buscar</button>
+    </div>
+    <div>
+      <label>Nome:</label>
+      <span id="nome"></span>
+    </div>
+    <div>
+    <label id="nome-completo">Nome completo:</label>
+    <span id="nome-completo2"></span>
+    </div>
+    <div>
+      <label>Capital:</label>
+      <span id="capital"></span>
+    </div>
+    <div>
+      <label>Continente:</label>
+      <span id="continente"></span>
+    </div>
+    <div>
+      <label>População:</label>
+      <span id="populacao"></span>
+    </div>
+    <div>
+      <label>Área:</label>
+      <span id="area"></span>
+    </div>
+    <div>
+      <label>Moeda:</label>
+      <span id="moeda"></span>
+    </div>
+    <div>
+      <label>Idioma:</label>
+      <span id="idioma"></span>
+    </div>
+    <div>
+    <label>Bandeira: </label>
+    <div id="bandeira"></div>
+    </div>
+    <script>
+
+function pibpais() {
+      var paisx = "BRA";
+      return fetch(`https://api.worldbank.org/v2/country/${paisx}/indicator/NY.GDP.MKTP.CD?format=json`)
+        .then(response => response.json())
+        .then(data => {
+          const brazilData = data[1].filter(d => d.country.value === 'Brazil')[0];
+          const gdp = brazilData.value;
+          return `US$ ${gdp.toFixed(2)}`;
+        });
+    }
+    pibpais().then(result => document.getElementById('pib-brasil').textContent = result);
+
+    
+
+      function buscar() {
+        const nomePais = document.getElementById("pais").value;
+        fetch(`https://restcountries.com/v3.1/name/${nomePais}`)
+          .then(response => response.json())
+          .then(data => {
+            const pais = data[0];
+            const nome = pais.name.common;
+            const nome2 = pais.name.official;
+            const capital = pais.capital[0];
+            const continente = pais.continents[0];
+            const populacao = pais.population;
+            const area = pais.area;
+            const bandeira = pais.flags.png
+            const idiomas = Object.keys(pais.languages).map(key => ({
+                nome: key,
+                valor: pais.languages[key]
+              }));
+            const moedas = Object.keys(pais.currencies).map(key => ({
+              nome: key,
+              valor: pais.currencies[key].name
+            }));
+
+            document.getElementById("nome").innerText = nome;
+            document.getElementById("nome-completo2").innerText = nome2
+            document.getElementById("capital").innerText = capital;
+            document.getElementById("continente").innerText = continente;
+            document.getElementById("populacao").innerText = populacao;
+            document.getElementById("area").innerText = (area + " quilômetros");
+            document.getElementById("moeda").innerText = (moedas[0].valor)
+            document.getElementById("idioma").innerText = (idiomas[0].valor)
+            document.getElementById("bandeira").innerHTML = `<img id="img" src="${bandeira}" alt="Bandeira do país">`;
+            var imagew = document.getElementById("img")
+            imagew.style.maxHeight = "100%"
+            imagew.style.maxWidth = "100%"
+            imagew.style.minHeight = "100%"
+            imagew.style.minWidth = "100%"
+
+
+            function pibpais() {
+      var paisx = "BRA";
+      return fetch(`https://api.worldbank.org/v2/country/${paisx}/indicator/NY.GDP.MKTP.CD?format=json`)
+        .then(response => response.json())
+        .then(data => {
+          const brazilData = data[1].filter(d => d.country.value === 'Brazil')[0];
+          const gdp = brazilData.value;
+          return {gdp, gdpPixels: Math.sqrt(gdp/1000000000)*20};
+        });
+    }
+
+
+        })}
+        </script>
